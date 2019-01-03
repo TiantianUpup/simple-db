@@ -135,6 +135,7 @@ public class TupleDesc implements Serializable {
         for (int i = 0; i < tdItemList.size(); i++) {
             if (tdItemList.get(i).fieldName.equals(name)) {
                 index = i;
+                break;
             }
         }
 
@@ -188,7 +189,17 @@ public class TupleDesc implements Serializable {
             fieldList.add(tdItem2.get(i).fieldName);
         }
 
-        TupleDesc newTupleDesc = new TupleDesc((Type[]) typeList.toArray(), (String[])fieldList.toArray());
+        Type[] typeAr = new Type[typeList.size()];
+        String[] fieldAr = new String[fieldList.size()];
+        for (int i = 0; i < typeList.size(); i++) {
+            typeAr[i] = typeList.get(i);
+        }
+
+        for (int i = 0; i < fieldList.size(); i++) {
+            fieldAr[i] = fieldList.get(i);
+        }
+
+        TupleDesc newTupleDesc = new TupleDesc(typeAr, fieldAr);
         return newTupleDesc;
     }
 
