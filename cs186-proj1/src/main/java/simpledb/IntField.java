@@ -44,7 +44,7 @@ public class IntField implements Field {
      * Compare the specified field to the value of this Field.
      * Return semantics are as specified by Field.compare
      *
-     * @throws IllegalCastException if val is not an IntField
+     * @throws
      * @see Field#compare
      */
     public boolean compare(Predicate.Op op, Field val) {
