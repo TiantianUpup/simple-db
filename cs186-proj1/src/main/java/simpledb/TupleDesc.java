@@ -215,16 +215,17 @@ public class TupleDesc implements Serializable {
     public boolean equals(Object o) {
         // some code goes here
         if(o != null && o instanceof TupleDesc) {
-            if(((TupleDesc) o).tdItemList.size()==this.tdItemList.size()){
-                for(int i = 0; i < ((TupleDesc) o).tdItemList.size(); i++){
+            if(((TupleDesc) o).tdItemList.size()==this.tdItemList.size()) {
+                for(int i = 0; i < ((TupleDesc) o).tdItemList.size(); i++) {
                     //集合中的元素一个一个进行比较
-                    if(!((TupleDesc) o).tdItemList.get(i).equals(this.tdItemList.get(i))){
+                    if(!((TupleDesc) o).tdItemList.get(i).equals(this.tdItemList.get(i))) {
                         return false;
                     }
                 }
                 return true;
             }
         }
+
         return false;
     }
 
