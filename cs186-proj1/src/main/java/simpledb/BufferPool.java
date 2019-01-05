@@ -1,6 +1,12 @@
 package simpledb;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * BufferPool manages the reading and writing of pages into memory from
@@ -21,12 +27,21 @@ public class BufferPool {
     public static final int DEFAULT_PAGES = 50;
 
     /**
+     * 缓冲池缓存页面最大的数量
+     * */
+    private Map<PageId, Page> pageMap;
+
+    private int numPages;
+    /**
      * Creates a BufferPool that caches up to numPages pages.
      *
      * @param numPages maximum number of pages in this buffer pool.
      */
     public BufferPool(int numPages) {
         // some code goes here
+        this.numPages = numPages;
+        //并发安全
+        pageMap = new ConcurrentHashMap<>();
     }
 
     /**
@@ -47,7 +62,28 @@ public class BufferPool {
     public  Page getPage(TransactionId tid, PageId pid, Permissions perm)
         throws TransactionAbortedException, DbException {
         // some code goes here
-        return null;
+        //获取页需要进行加锁
+
+        if (pageMap.get(pid) == null) {
+            //通过DbFile.readPage获取Page对象
+            DbFile dbFile = Database.getCatalog().getDbFile(pid.getTableId());
+            //如果缓冲池未满，加入到缓冲池中
+            Page page = null;
+            try {
+                page = new HeapPage((HeapPageId) pid, dbFile.readPage(pid).getPageData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (pageMap.size() > numPages) {
+                //先失效
+                evictPage();
+            }
+
+            pageMap.put(pid, page);
+            return page;
+        }
+
+        return pageMap.get(pid);
     }
 
     /**
